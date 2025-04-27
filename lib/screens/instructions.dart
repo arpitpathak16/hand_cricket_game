@@ -105,7 +105,7 @@ class _InstructionWidgetState extends State<InstructionWidget> {
                 delay: 300,
                 child: _buildStep(
                   stepNumber: "1",
-                  title: "Tap the buttons to score Runs",
+                  title: "You have 10 seconds. Tap the buttons to score Runs",
                   image: 'assets/images/six.png',
                   screenWidth: screenWidth,
                 ),

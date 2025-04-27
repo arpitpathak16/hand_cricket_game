@@ -51,7 +51,7 @@ assets/ ├── images/ │ └── one.png, two.png, three.png, ... six.png
 
 1. Clone this repository
    ```bash
-   git clone https://github.com/arpitpathak16/hand_cricket
+   git clone https://github.com/arpitpathak16/hand_cricket_game
    ```
 2. Navigate into the project folder
    ```bash

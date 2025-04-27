@@ -63,14 +63,18 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
   }
 
   void _handleTimeout() {
-    if (isPlayerBatting) {
-      _showOverlayImage('time_up');
-      Future.delayed(const Duration(milliseconds: 1200), () {
-        _showGameOver("Time's Up! You Lost!");
-      });
-    } else {
-      // If needed: you can handle timeout for computer batting too
-    }
+    // if (isPlayerBatting) {
+    //   _showOverlayImage('time_up');
+    //   Future.delayed(const Duration(milliseconds: 1200), () {
+    //     _showGameOver("Time's Up! You Lost!");
+    //   });
+    // } else {
+    //   // If needed: you can handle timeout for computer batting too
+    // }
+    _showOverlayImage('time_up');
+    Future.delayed(const Duration(milliseconds: 1200), () {
+      _showGameOver("Time's Up! You Lost!");
+    });
   }
 
   void _loadRiveAssets() async {
@@ -119,6 +123,16 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
     setState(() {
       bool isOut = (playerChoice == computerChoice);
 
+      // Map the number to the overlay image
+      final numberOverlay = {
+        1: 'ONE',
+        2: 'TWO',
+        3: 'THREE',
+        4: 'FOUR',
+        5: 'FIVE',
+        6: 'sixer',
+      };
+
       if (isPlayerBatting) {
         if (isOut) {
           _showOverlayImage('out');
@@ -127,24 +141,8 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
           playerScore += playerChoice;
           playerScores.add(playerChoice);
 
-          if (playerChoice == 1) {
-            _showOverlayImage('ONE');
-          }
-          if (playerChoice == 2) {
-            _showOverlayImage('TWO');
-          }
-          if (playerChoice == 3) {
-            _showOverlayImage('THREE');
-          }
-          if (playerChoice == 4) {
-            _showOverlayImage('FOUR');
-          }
-          if (playerChoice == 5) {
-            _showOverlayImage('FIVE');
-          }
-          if (playerChoice == 6) {
-            _showOverlayImage('sixer');
-          }
+          _showOverlayImage(numberOverlay[playerChoice]!); // <-- dynamic lookup
+
           currentBall++;
           if (currentBall == 6) {
             _switchToComputerBatting();
@@ -157,9 +155,11 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
         } else {
           computerScore += computerChoice;
           computerScores.add(computerChoice);
-          if (computerChoice == 6) {
-            _showOverlayImage('sixer');
-          }
+
+          _showOverlayImage(
+            numberOverlay[computerChoice]!,
+          ); // <-- dynamic lookup
+
           currentBall++;
           if (computerScore > playerScore) {
             _showResult();
@@ -184,8 +184,83 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
       currentBall = 0;
       computerScores.clear();
     });
-    _showOverlayImage('game_bowl');
-    _startChoiceTimer(); // Restart timer for bowling
+
+    Future.delayed(const Duration(milliseconds: 2500), () {
+      _showOverlayImage('game_defend');
+    });
+    // First show a stylish RCB-style dialog
+    Future.delayed(const Duration(milliseconds: 500), () {
+      _showDefendDialog();
+      _startChoiceTimer();
+    });
+
+    // Then show small defend overlay after dialog
+  }
+
+  void _showDefendDialog() {
+    int targetScore = playerScore + 1;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF0D1B46), // Deep RCB dark blue
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: const BorderSide(color: Colors.amber, width: 3),
+          ),
+          title: const Text(
+            'Get Ready!',
+            style: TextStyle(
+              color: Colors.amberAccent,
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Defend $playerScore runs in 6 balls\nto win the match!",
+                style: const TextStyle(color: Colors.white, fontSize: 18),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/overlays/game_bowl.png',
+                height: 100,
+                width: 100,
+                fit: BoxFit.contain,
+              ),
+            ],
+          ),
+          actions: [
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                  "Start Bowling",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showResult() {
@@ -578,36 +653,91 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
 
   Widget _buildHandSelectionButtons() {
     List<int> scoresToDisplay = isPlayerBatting ? playerScores : computerScores;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         double screenWidth = constraints.maxWidth;
 
-        // Dynamic sizing for score boxes
         double boxSize = (screenWidth - (6 * 8)) / 6;
-
-        // Dynamic sizing for buttons
         double buttonWidth = (screenWidth - 2 * 10 - 2 * 16) / 3;
         double buttonHeight = buttonWidth * 0.75;
+
+        int totalBallsPlayed = playerScores.length;
+        double runRate =
+            totalBallsPlayed > 0 ? (playerScore / totalBallsPlayed) * 6 : 0.0;
+        double strikeRate =
+            totalBallsPlayed > 0 ? (playerScore / totalBallsPlayed) * 100 : 0.0;
+        int projectedScore = runRate.round();
+
+        int remainingBalls = 6 - computerScores.length;
+        int runsToDefend = 0;
+        if (playerScore - computerScore >= 0) {
+          runsToDefend = playerScore - computerScore + 1;
+        } else {
+          runsToDefend = playerScore - computerScore;
+        }
+        if (runsToDefend < 0) {
+          runsToDefend = 0;
+        }
+        if (remainingBalls < 0) {
+          remainingBalls = 0;
+        }
 
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Score boxes
+            // 🔥 Dynamic Info Text Row
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 8.0,
+                horizontal: 16,
+              ),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 16,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(
+                    255,
+                    255,
+                    176,
+                    7,
+                  ).withOpacity(0.2), // Light golden glow
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: const Color(0xFFFFB300), // Bold golden border
+                    width: 2,
+                  ),
+                ),
+                child: Text(
+                  isPlayerBatting
+                      ? "Strike Rate: ${strikeRate.toStringAsFixed(1)} | Projected: $projectedScore"
+                      : "Target: ${playerScore + 1} | Defend $runsToDefend runs in $remainingBalls balls",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.amberAccent,
+                    letterSpacing: 1.2,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            //  Over balls (scoreboxes)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(6, (index) {
-                Color boxColor = Colors.white.withOpacity(0.8); // default color
+                Color boxColor = Colors.white.withOpacity(0.8);
 
                 if (index < scoresToDisplay.length) {
                   if (scoresToDisplay[index] == 6) {
-                    boxColor = Colors.green; // Six → Green
+                    boxColor = Colors.green;
                   } else if (scoresToDisplay[index] == 4) {
-                    boxColor = const Color.fromARGB(
-                      255,
-                      255,
-                      153,
-                      0,
-                    ); // Four → Yellow
+                    boxColor = const Color.fromARGB(255, 255, 0, 0);
                   }
                 }
 
@@ -640,9 +770,9 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
 
             const SizedBox(height: 20),
 
-            // Buttons for hand selection
+            // 🔥 Buttons for hand selection
             SizedBox(
-              height: buttonHeight * 2 + 20, // 2 rows of buttons + spacing
+              height: buttonHeight * 2 + 20,
               child: GridView.count(
                 crossAxisCount: 3,
                 physics: const NeverScrollableScrollPhysics(),
