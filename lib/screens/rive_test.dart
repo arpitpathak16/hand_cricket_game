@@ -14,7 +14,7 @@ class _RiveTestScreenState extends State<RiveTestScreen> {
   Artboard? _artboard;
   StateMachineController? _controller;
 
-  // Example inputs (customize based on your .riv file)
+  // Example inputs
   SMITrigger? _trigger;
   SMIBool? _toggle;
   SMINumber? _speed;
@@ -31,10 +31,9 @@ class _RiveTestScreenState extends State<RiveTestScreen> {
       final file = RiveFile.import(data);
       final artboard = file.mainArtboard;
 
-      // Try common state machine names if unsure
       final controller = StateMachineController.fromArtboard(
         artboard,
-        'State Machine 1', // Replace with your state machine name
+        'State Machine 1', //  state machine name
       );
 
       if (controller != null) {
@@ -47,7 +46,7 @@ class _RiveTestScreenState extends State<RiveTestScreen> {
           print('- ${input.name} (${input.runtimeType})');
         }
 
-        // Get references to inputs (customize these names)
+        // Get references to inputs
         _trigger = controller.findInput('trigger') as SMITrigger?;
         _toggle = controller.findInput('isActive') as SMIBool?;
         _speed = controller.findInput('speed') as SMINumber?;

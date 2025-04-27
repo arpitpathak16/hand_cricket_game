@@ -1,3 +1,6 @@
+// screens/welcome_screen.dart
+// Welcome Loading screen for a hand cricket game
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 

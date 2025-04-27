@@ -67,7 +67,7 @@ class _HandAnimationWidgetState extends State<HandAnimationWidget> {
   @override
   Widget build(BuildContext context) {
     return _artboard == null
-        ? const SizedBox.square(dimension: 150) // Better placeholder
+        ? const SizedBox.square(dimension: 150)
         : Rive(artboard: _artboard!, fit: BoxFit.contain);
   }
 }

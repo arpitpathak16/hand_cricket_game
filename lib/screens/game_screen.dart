@@ -1,6 +1,7 @@
+//dummy Screen for the game testing
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../widgets/hand_animation_widget.dart'; // Make sure this exists
+import '../widgets/hand_animation_widget.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({Key? key}) : super(key: key);

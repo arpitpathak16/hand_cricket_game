@@ -27,7 +27,7 @@ class _HandNumberSelectorState extends State<HandNumberSelector> {
 
     final controller = StateMachineController.fromArtboard(
       artboard,
-      'State Machine 1', // Match your state machine name
+      'State Machine 1', // state machine name
     );
 
     if (controller != null) {

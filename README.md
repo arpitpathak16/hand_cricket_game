@@ -1,9 +1,9 @@
-# 🏏 Hand Cricket Game - Flutter + Rive
+# Hand Cricket Game - Flutter + Rive
 
 Remember the golden childhood days when we used to play 'Hand Cricket' ?
 This is a simple and interactive Hand Cricket game built using Flutter and Rive animations!
 
-### 🎮 Gameplay Overview
+### Gameplay Overview
 
 - Player bats first for up to 6 balls or until OUT.
 - Computer bats second under the same rules.
@@ -14,7 +14,7 @@ This is a simple and interactive Hand Cricket game built using Flutter and Rive 
 
 ---
 
-### 🛠️ Built With
+### Built With
 
 - Flutter (3.x)
 - Rive (hand animation)
@@ -22,24 +22,46 @@ This is a simple and interactive Hand Cricket game built using Flutter and Rive 
 
 ---
 
-### 📂 Project Structure
+### Project Structure
 
 assets/ ├── images/ │ └── one.png, two.png, three.png, ... six.png ├── overlays/ │ └── batting.png, game_bowl.png, sixer.png, out.png, you_won.png, computer_won.png, draw.png ├── riv/ │ └── hand.riv lib/ └── hand_cricket_game_screen.dart (Main game logic)
 
 ---
 
-### ✨ Features
+### Features
 
-- 🎯 10-second countdown timer per ball
-- 🎯 Responsive layouts for phones and tablets
-- 🎯 Sixer, OUT, and Game Status overlay animations
-- 🎯 Smooth fade-in and fade-out overlay transitions
-- 🎯 Flutter `Stack` + `LayoutBuilder` based dynamic design
-- 🎯 Rive-based interactive hand animations
+- 10-second countdown timer per ball
+- Responsive layouts for phones and tablets
+- Sixer, OUT, and Game Status overlay animations
+- Smooth fade-in and fade-out overlay transitions
+- Flutter `Stack` + `LayoutBuilder` based dynamic design
+- Rive-based interactive hand animations
 
 ---
 
-### 📸 Screenshots
+### Tested Devices
+
+Responsiveness and gameplay tested on:
+
+- Android:
+- Pixel 7
+- Pixel 3a
+- Samsung Galaxy S8+
+- Samsung Galaxy S20 Ultra
+- Oppo F15
+- OnePlus Nord CE4
+
+iOS:
+
+- iPhone XR
+
+- iPhone 12 Pro
+
+- iPhone 14 Pro Max
+
+❗ iPad and larger tablets responsiveness not tested yet.
+
+### Screenshots
 
 |             Batting Screen              |            Sixer Overlay            |                 Game Over                 |
 | :-------------------------------------: | :---------------------------------: | :---------------------------------------: |
@@ -47,7 +69,7 @@ assets/ ├── images/ │ └── one.png, two.png, three.png, ... six.png
 
 ---
 
-### 🚀 How to Run
+### How to Run and build .apk file
 
 1. Clone this repository
    ```bash
@@ -65,10 +87,31 @@ assets/ ├── images/ │ └── one.png, two.png, three.png, ... six.png
    ```bash
    flutter run
    ```
+5. Generate .apk file
+   ```bash
+   flutter build apk --release
+   ```
 
 ---
 
-### 📋 TODO (Optional Enhancements)
+### Build .apk file
+
+1. Install dependencies
+   ```bash
+   flutter pub get
+   ```
+2. Run the app
+   ```bash
+   flutter run
+   ```
+3. Generate .apk file
+   ```bash
+   flutter build apk --release
+   ```
+
+---
+
+### TODO (Optional Enhancements)
 
 - Add sound effects (bat hit, out, sixer)
 - Add leaderboard for high scores
@@ -76,7 +119,7 @@ assets/ ├── images/ │ └── one.png, two.png, three.png, ... six.png
 
 ---
 
-### 👨‍💻 Author
+### Author
 
 - **Arpit Pathak** – [arpitpathak16](https://github.com/arpitpathak16)
 

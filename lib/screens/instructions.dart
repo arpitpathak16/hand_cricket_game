@@ -1,3 +1,6 @@
+// screens/instructions.dart
+// Instruction screen for a hand cricket game
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 

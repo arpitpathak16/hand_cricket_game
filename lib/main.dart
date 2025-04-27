@@ -1,3 +1,4 @@
+// main.dart
 import 'package:hand_cricket_game/screens/hand_cricket_game_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hand_cricket_game/screens/instructions.dart';
@@ -22,11 +23,6 @@ class HandCricketApp extends StatelessWidget {
       // Define app routes
       initialRoute: '/',
       routes: {
-        // '/': (context) => const InstructionWidget(),
-        // // '/': (context) => const HomeScreen(),
-        // '/game': (context) => const HandCricketGameScreen(),
-        // '/test': (context) => const RiveTestScreen(),
-        // '/instruction': (context) => const InstructionWidget(),
         '/': (context) => const WelcomeSplashScreen(),
         '/instructions': (context) => const InstructionWidget(),
         '/game': (context) => const HandCricketGameScreen(),
@@ -46,10 +42,8 @@ class HomeScreen extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(
-              "assets/images/background.png",
-            ), // Add your background image path
-            fit: BoxFit.cover, // Adjust based on your needs
+            image: AssetImage("assets/images/background.png"),
+            fit: BoxFit.cover,
           ),
         ),
         child: Center(
@@ -58,10 +52,7 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(
-                  'assets/overlays/game_bowl.png',
-                  height: 150,
-                ), // Add your logo
+                Image.asset('assets/overlays/game_bowl.png', height: 150),
                 const SizedBox(height: 40),
                 _buildMenuButton(context, 'Start Game', '/game', Colors.green),
                 const SizedBox(height: 20),

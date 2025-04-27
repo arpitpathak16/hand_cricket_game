@@ -1,9 +1,13 @@
-import 'dart:async';
+// screens/hand_cricket_game_screen.dart
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rive/rive.dart';
 import 'dart:math';
+
+// Main Hand Cricket Game Screen
+// Controls animation, gameplay logic, timers, overlays
 
 class HandCricketGameScreen extends StatefulWidget {
   const HandCricketGameScreen({super.key});
@@ -13,7 +17,7 @@ class HandCricketGameScreen extends StatefulWidget {
 }
 
 class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
-  // Game state variables
+  // ===== Game State Variables =====
   bool isPlayerBatting = true;
   int playerScore = 0;
   int computerScore = 0;
@@ -21,16 +25,18 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
   List<int> playerScores = [];
   List<int> computerScores = [];
 
+  // ===== Overlay Variables =====
   String? overlayImagePath;
   double overlayOpacity = 0.0;
-  double overlayScale = 0.8; // Start slightly small
+  double overlayScale = 0.8;
 
+  // ===== Timer Variables =====
   int remainingTime = 10;
   Timer? choiceTimer;
 
   bool isBlinking = false;
 
-  // Artboard related variables
+  // ===== Animation Control Variables =====
   Artboard? _playerArtboard;
   Artboard? _computerArtboard;
   SMINumber? _playerHandInput;
@@ -44,6 +50,7 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
     _startChoiceTimer(); // Start timer when game starts
   }
 
+  // Starts the 10-second decision timer
   void _startChoiceTimer() {
     choiceTimer?.cancel();
     setState(() {
@@ -62,21 +69,15 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
     });
   }
 
+  // Handles timeout event
   void _handleTimeout() {
-    // if (isPlayerBatting) {
-    //   _showOverlayImage('time_up');
-    //   Future.delayed(const Duration(milliseconds: 1200), () {
-    //     _showGameOver("Time's Up! You Lost!");
-    //   });
-    // } else {
-    //   // If needed: you can handle timeout for computer batting too
-    // }
     _showOverlayImage('time_up');
     Future.delayed(const Duration(milliseconds: 1200), () {
       _showGameOver("Time's Up! You Lost!");
     });
   }
 
+  // Loads Rive animations for both player and computer
   void _loadRiveAssets() async {
     final playerData = await rootBundle.load('assets/riv/hand.riv');
     final playerFile = RiveFile.import(playerData);
@@ -114,6 +115,7 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
     });
   }
 
+  // Plays a single turn of the game
   void _playTurn(int playerChoice) {
     final computerChoice = Random().nextInt(6) + 1;
 
@@ -141,7 +143,7 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
           playerScore += playerChoice;
           playerScores.add(playerChoice);
 
-          _showOverlayImage(numberOverlay[playerChoice]!); // <-- dynamic lookup
+          _showOverlayImage(numberOverlay[playerChoice]!); //  dynamic lookup
 
           currentBall++;
           if (currentBall == 6) {
@@ -168,7 +170,7 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
           }
         }
       }
-      // At the very end of _playTurn()
+
       _startChoiceTimer();
     });
 
@@ -178,6 +180,7 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
     });
   }
 
+  // Switches turn to computer's batting
   void _switchToComputerBatting() {
     setState(() {
       isPlayerBatting = false;
@@ -185,18 +188,19 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
       computerScores.clear();
     });
 
+    // show small defend overlag
     Future.delayed(const Duration(milliseconds: 2500), () {
       _showOverlayImage('game_defend');
     });
-    // First show a stylish RCB-style dialog
+
+    // show a dialog
     Future.delayed(const Duration(milliseconds: 500), () {
       _showDefendDialog();
       _startChoiceTimer();
     });
-
-    // Then show small defend overlay after dialog
   }
 
+  // Shows the defend challenge dialog
   void _showDefendDialog() {
     int targetScore = playerScore + 1;
 
@@ -205,7 +209,7 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF0D1B46), // Deep RCB dark blue
+          backgroundColor: const Color(0xFF0D1B46),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
             side: const BorderSide(color: Colors.amber, width: 3),
@@ -223,7 +227,7 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Defend $playerScore runs in 6 balls\nto win the match!",
+                "Defend $targetScore runs in 6 balls\nto win the match!",
                 style: const TextStyle(color: Colors.white, fontSize: 18),
                 textAlign: TextAlign.center,
               ),
@@ -263,12 +267,13 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
     );
   }
 
+  // Shows game result
   void _showResult() {
     Future.delayed(const Duration(milliseconds: 1200), () {
       String message;
       String overlayName;
       if (computerScore > playerScore) {
-        message = "Computer Wins!";
+        message = "BOT Wins!";
         overlayName = 'computer_won';
       } else if (computerScore < playerScore) {
         message = "You Win!";
@@ -284,6 +289,7 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
     });
   }
 
+  /// Shows an animated overlay (like SIX, OUT, WIN)
   void _showOverlayImage(String imageName) {
     setState(() {
       overlayImagePath = 'assets/overlays/$imageName.png';
@@ -315,6 +321,7 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
     });
   }
 
+  // Shows final Game Over dialog
   void _showGameOver(String message) {
     choiceTimer?.cancel(); // Stop timer
 
@@ -352,7 +359,7 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Player: $playerScore\nComputer: $computerScore',
+                  'You: $playerScore\nBOT: $computerScore',
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: Colors.white70, fontSize: 16),
                 ),
@@ -386,6 +393,7 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
     );
   }
 
+  // Resets game variables and restarts
   void _resetGame() {
     setState(() {
       isPlayerBatting = true;
@@ -399,6 +407,7 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
     _startCountdown();
   }
 
+  // Starts the 3-2-1 countdown overlays
   void _startCountdown() {
     _showOverlayImage('num_3');
 
@@ -418,6 +427,8 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
       });
     });
   }
+
+  // ==== WIDGET BUILD METHODS BELOW ====
 
   @override
   Widget build(BuildContext context) {
@@ -483,17 +494,17 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
           Flexible(
             flex: 1,
             child: _buildPlayerInfoCard(
-              "You",
+              "assets/images/user_img.png",
               "$playerScore",
               true,
               isPlayerBatting,
             ),
           ),
-          const SizedBox(width: 12), // small gap between player and computer
+          const SizedBox(width: 12),
           Flexible(
             flex: 1,
             child: _buildPlayerInfoCard(
-              "Computer",
+              "assets/images/bot_img.png",
               "$computerScore",
               true,
               !isPlayerBatting,
@@ -505,7 +516,7 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
   }
 
   Widget _buildPlayerInfoCard(
-    String name,
+    String imagePath,
     String score,
     bool isActive,
     bool isBatting,
@@ -538,30 +549,32 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
                   CircleAvatar(
                     radius: avatarRadius,
                     backgroundColor: Colors.white.withOpacity(0.2),
-                    child: Text(
-                      name[0],
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: baseFontSize,
-                        color: Colors.white,
+                    child: ClipOval(
+                      child: Image.asset(
+                        imagePath,
+                        fit: BoxFit.cover,
+                        width: avatarRadius * 2,
+                        height: avatarRadius * 2,
                       ),
                     ),
                   ),
-                  if (isBatting)
-                    Positioned(
-                      bottom: -4,
-                      right: -8,
-                      child: Icon(
-                        Icons.sports_cricket,
-                        color: Colors.amberAccent,
-                        size: baseFontSize * 0.8,
-                      ),
+                  Positioned(
+                    bottom: -4,
+                    right: -8,
+                    child: Icon(
+                      isBatting ? Icons.sports_cricket : Icons.sports_baseball,
+                      color:
+                          isBatting
+                              ? const Color.fromARGB(255, 255, 217, 0)
+                              : const Color.fromARGB(255, 255, 255, 255),
+                      size: baseFontSize * 0.8,
                     ),
+                  ),
                 ],
               ),
               SizedBox(width: cardWidth * 0.08),
 
-              // Add Flexible around score text
+              // Score Text
               Flexible(
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
@@ -627,7 +640,7 @@ class _HandCricketGameScreenState extends State<HandCricketGameScreen> {
         duration: const Duration(milliseconds: 500),
         opacity: isBlinking ? (remainingTime % 2 == 0 ? 1.0 : 0.0) : 1.0,
         child: Text(
-          'Time Left: $remainingTime s',
+          'Time Left: $remainingTime',
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
