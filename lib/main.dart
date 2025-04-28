@@ -4,12 +4,45 @@ import 'package:flutter/material.dart';
 import 'package:hand_cricket_game/screens/instructions.dart';
 import 'package:hand_cricket_game/screens/welcome_screen.dart';
 import 'screens/rive_test.dart';
-import 'screens/hand_num.dart';
+import 'package:just_audio/just_audio.dart';
 
 void main() => runApp(const HandCricketApp());
 
-class HandCricketApp extends StatelessWidget {
+class HandCricketApp extends StatefulWidget {
   const HandCricketApp({super.key});
+
+  @override
+  State<HandCricketApp> createState() => _HandCricketAppState();
+}
+
+class _HandCricketAppState extends State<HandCricketApp> {
+  final AudioPlayer _backgroundPlayer =
+      AudioPlayer(); // Background music player
+
+  @override
+  void initState() {
+    super.initState();
+    _playBackgroundMusic();
+  }
+
+  void _playBackgroundMusic() async {
+    try {
+      await _backgroundPlayer.setLoopMode(LoopMode.one); // Repeat continuously
+      await _backgroundPlayer.setVolume(0.4); // Softer volume
+      await _backgroundPlayer.setAsset(
+        'music/background-music.mp3',
+      ); 
+      await _backgroundPlayer.play();
+    } catch (e) {
+      debugPrint("Error playing background music: $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    _backgroundPlayer.dispose(); // Clean up
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +53,6 @@ class HandCricketApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: Colors.grey[100],
       ),
-      // Define app routes
       initialRoute: '/',
       routes: {
         '/': (context) => const WelcomeSplashScreen(),
@@ -38,9 +70,8 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title: const Text('Hand Cricket')),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/images/background.png"),
             fit: BoxFit.cover,
@@ -59,7 +90,7 @@ class HomeScreen extends StatelessWidget {
                 _buildMenuButton(
                   context,
                   'Game Instructions',
-                  '/instruction',
+                  '/instructions',
                   Colors.blue,
                 ),
               ],
