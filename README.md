@@ -14,6 +14,10 @@ This is a simple and interactive Hand Cricket game built using Flutter and Rive 
 
 ---
 
+https://github.com/user-attachments/assets/2caa321e-7e74-4a09-b9df-bdbdb8002813
+
+
+
 ### Built With
 
 - Flutter (3.x)
